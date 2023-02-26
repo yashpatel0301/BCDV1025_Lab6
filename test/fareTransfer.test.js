@@ -55,7 +55,7 @@ describe('Fare Transfer Basic Tests', () => {
                     const copied = Object.assign({}, chaincodeStub.states);
 
                     for (let key in copied) {
-                        yield {value: copied[key]};
+                        yield { value: copied[key] };
                     }
                 }
             }
@@ -63,7 +63,7 @@ describe('Fare Transfer Basic Tests', () => {
             return Promise.resolve(internalGetStateByRange());
         });
 
-        customer={
+        customer = {
             ID: 'customer1',
             FirstName: 'Brad',
             LastName: 'Pitt',
@@ -89,7 +89,7 @@ describe('Fare Transfer Basic Tests', () => {
             await fareTransfer.InitLedger(transactionContext);
             let ret = JSON.parse((await chaincodeStub.getState('customer1')).toString());
 
-            expect(ret).to.eql(Object.assign(customer,{docType: 'customer', LastTxnId: 'fare1'}));
+            expect(ret).to.eql(Object.assign(customer, { docType: 'customer', LastTxnId: 'fare1' }));
         });
     });
 
@@ -99,9 +99,9 @@ describe('Fare Transfer Basic Tests', () => {
 
             let fareTransfer = new FareTransfer();
             try {
-                await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
+                await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
                 assert.fail('EnrollCustomer  should have failed');
-            } catch(err) {
+            } catch (err) {
                 expect(err.name).to.equal('failed inserting key');
             }
         });
@@ -109,11 +109,11 @@ describe('Fare Transfer Basic Tests', () => {
         it('should return success on EnrollCustomer ', async () => {
             let fareTransfer = new FareTransfer();
 
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             let ret = JSON.parse((await chaincodeStub.getState(customer.ID)).toString());
 
-            expect(ret).to.eql(Object.assign({docType: 'customer'}, customer));
+            expect(ret).to.eql(Object.assign({ docType: 'customer' }, customer));
 
         });
     });
@@ -121,7 +121,7 @@ describe('Fare Transfer Basic Tests', () => {
     describe('Test GetCustomer', () => {
         it('should return error on GetCustomer', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             try {
                 await fareTransfer.GetCustomer(transactionContext, 'customer2');
@@ -133,17 +133,17 @@ describe('Fare Transfer Basic Tests', () => {
 
         it('should return success on GetCustomer', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             let ret = JSON.parse(await chaincodeStub.getState(customer.ID));
-            expect(ret).to.eql(Object.assign({docType: 'customer'}, customer));
+            expect(ret).to.eql(Object.assign({ docType: 'customer' }, customer));
         });
     });
 
     describe('Test UpdatePrimaryTransit', () => {
         it('should return error on UpdatePrimaryTransit', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             try {
                 await fareTransfer.UpdatePrimaryTransit(transactionContext, 'customer7', 'YRT');
@@ -155,19 +155,19 @@ describe('Fare Transfer Basic Tests', () => {
 
         it('should return success on UpdatePrimaryTransit', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer. LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             await fareTransfer.UpdatePrimaryTransit(transactionContext, 'customer1', 'MI');
             let ret = JSON.parse(await chaincodeStub.getState(customer.ID));
 
-            expect(ret).to.eql(Object.assign({docType: 'customer', LastTxnId: 'fare1',TransitId: 'MI'}, customer));
+            expect(ret).to.eql(Object.assign(customer, { docType: 'customer', TransitId: 'MI' }));
         });
     });
 
     describe('Test DeleteCustomer', () => {
         it('should return error on DeleteCustomer', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer. LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             try {
                 await fareTransfer.DeleteCustomer(transactionContext, 'customer2');
@@ -179,7 +179,7 @@ describe('Fare Transfer Basic Tests', () => {
 
         it('should return success on DeleteCustomer', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer. LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             await fareTransfer.DeleteCustomer(transactionContext, customer.ID);
             let ret = await chaincodeStub.getState(customer.ID);
@@ -191,7 +191,7 @@ describe('Fare Transfer Basic Tests', () => {
         it('should return error on ChargeFare', async () => {
             let fareTransfer = new FareTransfer();
             try {
-                await fareTransfer.ChargeFare (transactionContext, customer.ID, 'Me');
+                await fareTransfer.ChargeFare(transactionContext, customer.ID, 'Me');
                 assert.fail('Transit Id Me does not exist');
             } catch (err) {
                 expect(err.message).to.equal('Transit Id Me does not exist');
@@ -200,7 +200,7 @@ describe('Fare Transfer Basic Tests', () => {
 
         it('should return success on ChargeFare', async () => {
             let fareTransfer = new FareTransfer();
-            await fareTransfer.EnrollCustomer (transactionContext, customer.ID, customer.FirstName, customer. LastName, customer.TransitId);
+            await fareTransfer.EnrollCustomer(transactionContext, customer.ID, customer.FirstName, customer.LastName, customer.TransitId);
 
             const ret = await fareTransfer.ChargeFare(transactionContext, customer.ID, 'MI');
 
@@ -215,20 +215,20 @@ describe('Fare Transfer Basic Tests', () => {
         it('should return success on GetAllCustomers', async () => {
             let fareTransfer = new FareTransfer();
 
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer1', 'Robert', 'Brown', 'TTC');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer2', 'Paul', 'Reeves', 'MI');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer3', 'Mackenzie', 'Davis', 'BT');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer4', 'Van', 'Louis', 'YRT');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer1', 'Robert', 'Brown', 'TTC');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer2', 'Paul', 'Reeves', 'MI');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer3', 'Mackenzie', 'Davis', 'BT');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer4', 'Van', 'Louis', 'YRT');
 
             let ret = await fareTransfer.GetAllCustomers(transactionContext);
             ret = JSON.parse(ret.toString());
             expect(ret.length).to.equal(4);
 
             let expected = [
-                {ID: 'customer1', docType: 'customer', FirstName: 'Robert', LastName: 'Brown',  TransitId: 'TTC', LastTxnId: ''},
-                {ID: 'customer2', docType: 'customer', FirstName: 'Paul', LastName: 'Reeves',  TransitId: 'MI', LastTxnId: ''},
-                {ID: 'customer3', docType: 'customer', FirstName: 'Mackenzie', LastName: 'Davis',  TransitId: 'BT', LastTxnId: ''},
-                {ID: 'customer4', docType: 'customer', FirstName: 'Van', LastName: 'Louis',  TransitId: 'YRT', LastTxnId: ''}
+                { ID: 'customer1', docType: 'customer', FirstName: 'Robert', LastName: 'Brown', TransitId: 'TTC', LastTxnId: '' },
+                { ID: 'customer2', docType: 'customer', FirstName: 'Paul', LastName: 'Reeves', TransitId: 'MI', LastTxnId: '' },
+                { ID: 'customer3', docType: 'customer', FirstName: 'Mackenzie', LastName: 'Davis', TransitId: 'BT', LastTxnId: '' },
+                { ID: 'customer4', docType: 'customer', FirstName: 'Van', LastName: 'Louis', TransitId: 'YRT', LastTxnId: '' }
             ];
 
             expect(ret).to.eql(expected);
@@ -244,10 +244,10 @@ describe('Fare Transfer Basic Tests', () => {
                 chaincodeStub.states[key] = 'non-json-value';
             });
 
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer1', 'Robert', 'Brown', 'TTC');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer2', 'Paul', 'Reeves', 'MI');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer3', 'Mackenzie', 'Davis', 'BT');
-            await fareTransfer.EnrollCustomer (transactionContext, 'customer4', 'Van', 'Louis', 'YRT');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer1', 'Robert', 'Brown', 'TTC');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer2', 'Paul', 'Reeves', 'MI');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer3', 'Mackenzie', 'Davis', 'BT');
+            await fareTransfer.EnrollCustomer(transactionContext, 'customer4', 'Van', 'Louis', 'YRT');
 
             let ret = await fareTransfer.GetAllCustomers(transactionContext);
             ret = JSON.parse(ret);
@@ -255,9 +255,9 @@ describe('Fare Transfer Basic Tests', () => {
 
             let expected = [
                 'non-json-value',
-                {ID: 'customer2', docType: 'customer', FirstName: 'Paul', LastName: 'Reeves', TransitId: 'MI', LastTxnId: ''},
-                {ID: 'customer3', docType: 'customer', FirstName: 'Mackenzie', LastName: 'Davis', TransitId: 'BT', LastTxnId: ''},
-                {ID: 'customer4', docType: 'customer', FirstName: 'Van', LastName: 'Louis', TransitId: 'YRT', LastTxnId: ''}
+                { ID: 'customer2', docType: 'customer', FirstName: 'Paul', LastName: 'Reeves', TransitId: 'MI', LastTxnId: '' },
+                { ID: 'customer3', docType: 'customer', FirstName: 'Mackenzie', LastName: 'Davis', TransitId: 'BT', LastTxnId: '' },
+                { ID: 'customer4', docType: 'customer', FirstName: 'Van', LastName: 'Louis', TransitId: 'YRT', LastTxnId: '' }
             ];
 
             expect(ret).to.eql(expected);
